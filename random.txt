@@ -1,0 +1,118 @@
+DCLN soma = 0
+DCLN i
+DCLN vect[10]
+DCLN aux
+
+read aux 
+
+i = 1
+while i<= 3:
+    soma = soma + 1
+    i += 1
+
+print soma
+----
+PUSHI 0     //soma fica com endereco 0
+PUSHI 0     //i fica com endereco 1
+PUSHN 10    //vect fica com endereco de 2 
+PUSHI 0     //aux fica com endereco 12
+
+START       //acabou bloco de declaracoes comeca o de instrucoes com um START
+
+READ
+ATOI
+STOREG 12   //read aux
+
+
+PUSHI 1
+STOREG 1    //i=1
+
+E0: nop     //ciclo
+
+PUSHG 1
+PUSHI 3
+INFEQ       //i<=3 fica 0 se false ou 1 se true
+
+JZ E1       //so salta para o fim se for 0
+
+//caso dentro do ciclo
+PUSHG 0     //vai buscar o valor da soma
+PUSHG 1     //vai buscar i
+ADD
+STOREG 0    //soma = soma + i
+
+PUSHG 1
+PUSHI 1
+ADD         //i+1
+STOREG 1    //i = i+1
+
+JUMP E0     //salta sempre para o inicio
+
+E1: nop     //fim do ciclo 
+
+PUSHG 0     //ir buscar a soma
+WRITEI
+STOP
+
+
+devemos ter um fator que deriva em id, o compilador deve pegar nesse id 
+e fazer um get no dicionairo
+p.e: parser.tabid.get(p[1])
+
+para dar print a string
+PUSHS "string"
+WRITES
+
+
+------------------------------------------------------------------------
+//if(i==0) min = num
+PUSHG 3
+PUSHI 0
+EQUAL
+JZ E3
+PUSHG 1
+STOREG 2
+
+E3:
+//if(min > num) min = num:
+PUSHG 2
+PUSHG 1
+SUP
+JZ E4
+PUSHG 1
+STOREG 2
+JUMP E5     //saltar por cima do else
+
+E4: nop
+PUSHG 2
+STOREG 2
+JZ E5:
+
+E5: nop     //fim do else
+
+
+//i++
+PUSHG 3
+PUSHI 1
+ADD
+STOREG 3
+
+---------------------------------------
+def p_decl_int(p):
+    "decl : INT VAR SEMICOLON" 
+    parser.tabId[p2] = parser.prodEnd
+    parser.proxEnd += 1
+    p[0] = r'PUSHI 0\n'
+
+tabId vai ser um dicionario
+
+parser = yacc.yacc()
+parser.success = True
+parser.proxed = 0
+parser.tabId = {
+    'name':(endereco, tipo, tamanho)
+}
+
+parser.tabId.getAddr()
+parser.tabId.getType()
+parser.tabId.getSize()
