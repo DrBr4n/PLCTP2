@@ -18,7 +18,8 @@ def p_Bodys(p):
     "Bodys : Bodys Body"
     p[0] = p[1] + p[2]
 
-def p_DeclId(p):            
+def p_DeclId(p):   
+    "Decl : ID"         
     if p[1] in parser.idTab:
         p[0] = """PUSHS "Error variable already in use"\n""" + "WRITES" + "\n"
     else:
@@ -90,11 +91,11 @@ def p_TermOperations(p):
             | Term '/' Factor
             | Term '%' Factor"""
     if p[2] == '*':
-        p[0] = p[1] + p[3] + "MUL"
+        p[0] = p[1] + p[3] + "MUL \n"
     elif p[2] == '/':
-        p[0] = p[1] + p[3] + "DIV"
+        p[0] = p[1] + p[3] + "DIV \n"
     elif p[2] == '%':
-        p[0] = p[1] + p[3] + "MOD"
+        p[0] = p[1] + p[3] + "MOD \n"
 
 def p_FactorNum(p):
     "Factor : NUM"
