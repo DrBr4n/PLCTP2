@@ -3,71 +3,50 @@ import ply.lex as lex
 reserved = {
     'head' : 'HEAD',
     'endhead' : 'ENDHEAD',
-    'exit' : 'EXIT',
+    'end' : 'END',
     'if' : 'IF',
     'then' : 'THEN',
     'else' : 'ELSE',
-    'while' : 'WHILE'
+    'while' : 'WHILE',
+    'do' : 'DO'
 }
 
 # List of token names.
 tokens = (
-  'LPAREN',
-  'RPAREN',
-  'LBRACK',
-  'RBRACK',
-  'LCP',
-  'RCP',
   'NUM',
   'ID',
   'EQ',
-  'NE',
-  'PLUS',
-  'MINUS',
-  'TIMES',
-  'DIVIDE',
-  'MORE',
+  'NEQ',
   'MOREEQ',
-  'LESS',
   'LESSEQ',
   'AND',
   'OR',
-  'COMMA',
-  'IF',
-  'THEN',
-  'ELSE',
-  'WHILE',
-  'DO',
-  
 ) + tuple(reserved.values())
 
-literals = ['(' , ')' , '=' , '?' , '!' , '%' , '{' , '}']
-
+literals = ['(',')','{','}','[',']','+','-','*','/','%','=','>','<','?','!','%',',','$']
 
 # Regular expression rules for simple tokens
-t_LPAREN  = r'\('
-t_RPAREN  = r'\)'
-t_LBRACK  = r'\['
-t_RBRACK  = r'\]'
-t_LCP     = r'\{'
-t_RCP     = r'\}'
 t_EQ      = r'=='
-t_NE      = r'!='
-t_PLUS    = r'\+'
-t_MINUS   = r'-'
-t_TIMES   = r'\*'
-t_DIVIDE  = r'/'
-t_LESS    = r'<'
-t_LESSEQ  = r'<='
-t_MORE    = r'>'
+t_NEQ     = r'!='
 t_MOREEQ  = r'>='
+t_LESSEQ  = r'<='
 t_AND     = r'&'
 t_OR      = r'\|'
-t_COMMA   = r','
-t_EXIT    = r'EXIT'
+
+def t_HEAD(t):
+    r'HEAD'
+    return t
+
+def t_ENDHEAD(t):
+    r'ENDHEAD'
+    return t
+
+def t_END(t):
+    r'END'
+    return t
 
 def t_NUM(t):
-    r'\d+'
+    r'-?\d+'
     t.value = int(t.value)    
     return t
 
