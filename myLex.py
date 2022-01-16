@@ -8,7 +8,10 @@ reserved = {
     'then' : 'THEN',
     'else' : 'ELSE',
     'while' : 'WHILE',
-    'do' : 'DO'
+    'do' : 'DO',
+    'print' : 'PRINT',
+    'string' : "STRING",
+    'input' : 'INPUT'
 }
 
 # List of token names.
@@ -18,20 +21,17 @@ tokens = (
   'EQ',
   'NEQ',
   'MOREEQ',
-  'LESSEQ',
-  'AND',
-  'OR',
+  'LESSEQ'
 ) + tuple(reserved.values())
 
-literals = ['(',')','{','}','[',']','+','-','*','/','%','=','>','<','?','!','%',',','$']
+literals = ['(',')','{','}','[',']','+','-','*','/','%','=','>','<','?','!','%',',','$','&','|','"']
 
 # Regular expression rules for simple tokens
 t_EQ      = r'=='
 t_NEQ     = r'!='
 t_MOREEQ  = r'>='
 t_LESSEQ  = r'<='
-t_AND     = r'&'
-t_OR      = r'\|'
+
 
 def t_HEAD(t):
     r'HEAD'
@@ -39,6 +39,18 @@ def t_HEAD(t):
 
 def t_ENDHEAD(t):
     r'ENDHEAD'
+    return t
+
+def t_PRINT(t):
+    r'print'
+    return t
+
+def t_STRING(t):
+    r'\"[^"]*\" '
+    return t
+
+def t_INPUT(t):
+    r'input'
     return t
 
 def t_END(t):

@@ -41,8 +41,13 @@ def p_Simple(p):
        Decls : Decl
        Body : Expression
        Body : Atrib
+       Body : Logic
        Expression : Term
-       Term : Factor"""
+       Expression : Logic
+       Term : Factor
+       Body : String
+       Body : Read
+       """
     p[0] = p[1]
 
 def p_Empty(p):
@@ -74,7 +79,7 @@ def p_ExpressionOperations(p):
     elif (p[2] == "=="):
         p[0] = p[1] + p[3] + "EQUAL \n"
     elif (p[2] == "!="):
-        p[0] = p[1] + p[3] + "NEQ \n"           #qual e o codigo assembly?   
+        p[0] = p[1] + p[3] + "EQUAL\nNOT\n"             
     elif (p[2] == '>'):
         p[0] = p[1] + p[3] + "SUP \n"
     elif (p[2] == ">="):
@@ -83,8 +88,6 @@ def p_ExpressionOperations(p):
         p[0] = p[1] + p[3] + "INF \n"
     elif (p[2] == "<="):
         p[0] = p[1] + p[3] + "INFEQ \n"
-    elif(p[2] == '='):
-        p[0] = p[3] + p[1]
 
 def p_TermOperations(p):
     """Term : Term '*' Factor
@@ -112,10 +115,42 @@ def p_FactorExpression(p):
     "Factor : '(' Expression ')'"
     p[0] = p[2]
 
+def p_LogicExpression(p):
+    "Logic : Expression"
+    p[0] = p[1]
+
+def p_LogicAnd(p):
+    "Logic : '(' Logic '&' Expression ')'"
+    p[0] = p[2] + p[4] + "MUL \n"
+
+def p_LogicOr(p):
+    "Logic : '(' Logic '|' Expression ')'"
+    p[0] = p[2] + p[4] + "ADD \n" + p[2] + p[4] + "MUL\nSUB\n"
+
+def p_String(p):
+    "String : PRINT '(' STRING ')'"
+    p[0] = "PUSHS " + p[3] + "\n" + "WRITES\n"
+
+def p_StringID(p):
+    "String : PRINT '(' ID ')'"
+    if (p[3] in parser.idTab):
+        p[0] = "PUSHG " + str(parser.idTab[p[3]][0]) + "\n" + "STRI\n" + "WRITES\n"
+    else:
+        p[0] = """PUSHS "Error variable not declared"\n""" + "WRITES" + "\n"
+
+def p_ReadID(p):
+    "Read  : INPUT '(' ID ')'"
+    if (p[3] in parser.idTab):
+        p[0] = "READ\nATOI\nSTOREG " + str(parser.idTab[p[3]][0]) + "\n"
+    else:
+        p[0] = """PUSHS "Error variable not declared"\n""" + "WRITES" + "\n"
+
+
+
+
 def p_error(p):
     print('Syntax errorr: ', p)
     parser.success = False
-
 
 
 # Build the parser
@@ -145,16 +180,18 @@ parser.parse(text)
 ###     | "
 ###Body : Expression
 ###     | Atrib
+###     | Logics
+##     | String
+##     | Read
 #     | Condicion
-#     | Logics
 #     | Cicle
-#     | "
-#Atrib : ID '=' Expression 
-##Expression : Term
+###     | "
+###Atrib : ID '=' Expression 
+###Expression : Term
 ###           | Expression '+' Term
 ###           | Expression '-' Term
 ###           | Expression EQ Term
-##           | Expression NEQ Term
+###           | Expression NEQ Term
 ###           | Expression MORE Term
 ###           | Expression MOREEQ Term
 ###           | Expression LESS Term
@@ -164,11 +201,14 @@ parser.parse(text)
 ###     | Term '/' Factor
 ###     | Term '%' Factor
 ###Factor : NUM
-##       | ID
+###       | ID
 ###       | '(' Expression ')' 
-#Logics : Logics '&' Expression
-#       | Logics '|' Expression
-#       | Expression
+###Logic : '(' Logic '&' Expression ')'
+###      | '(' Logic '|' Expression ')'
+###      | Expression
+##String : PRINT '(' STRING ')'
+##       | PRINT '(' ID ')'"
+##Read  : INPUT '(' ID ')'
 #Condicion : IF '(' Expression ')' '{' body '}' ELSE '{' body '}'
 #cicle : WHILE '(' Logics ')' DO '{' body '}'
 #"""
