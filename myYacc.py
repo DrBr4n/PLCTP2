@@ -1,5 +1,3 @@
-from __future__ import print_function
-from nis import match
 from myLex import tokens
 import ply.yacc as yacc
 import re
@@ -23,16 +21,25 @@ def p_DeclId(p):
     if p[1] in parser.idTab:
         p[0] = """PUSHS "Error variable already in use"\n""" + "WRITES" + "\n"
     else:
-        p[0] = "PUSHI 0 " + "\n" + "STOREG " + str(parser.proxAddr) + "\n"
+        p[0] = "PUSHI 0\n"
         parser.idTab[p[1]] = (parser.proxAddr, "INT", 1)     
         parser.proxAddr += 1
+
+def p_DeclIdArray(p):   
+    "Decl : ID '[' NUM ']'"         
+    if p[1] in parser.idTab:
+        p[0] = """PUSHS "Error variable already in use"\n""" + "WRITES" + "\n"
+    else:
+        p[0] = "PUSHN " + str(p[3]) + "\n"
+        parser.idTab[p[1]] = (parser.proxAddr, "ARRAY", int(p[3]))     
+        parser.proxAddr += int(p[3])
 
 def p_Decl(p):              
     "Decl : ID '=' Expression"
     if p[1] in parser.idTab:
         p[0] = """PUSHS "Error variable already in use"\n""" + "WRITES" + "\n"
     else:
-        p[0] = p[3] + "STOREG " + str(parser.proxAddr) + "\n"
+        p[0] = p[3]
         parser.idTab[p[1]] = (parser.proxAddr, "INT", 1)
         parser.proxAddr += 1
 
@@ -47,6 +54,8 @@ def p_Simple(p):
        Term : Factor
        Body : String
        Body : Read
+       Body : Cond
+       Body : Cicle
        """
     p[0] = p[1]
 
@@ -54,13 +63,14 @@ def p_Empty(p):
     "Body : "
     "Decl : "
     p[0] = ""
-
+    
 def p_Atrib(p):
     "Atrib : ID '=' Expression"
     if (p[1] in parser.idTab):
         p[0] = p[3] + "STOREG " + str(parser.idTab[p[1]][0]) + "\n"
     else:
         p[0] = """PUSHS "Error variable not declared"\n""" + "WRITES" + "\n"
+
 
 def p_ExpressionOperations(p):
     """Expression : Expression '+' Term
@@ -145,8 +155,15 @@ def p_ReadID(p):
     else:
         p[0] = """PUSHS "Error variable not declared"\n""" + "WRITES" + "\n"
 
+def p_Cond(p):
+    "Cond : IF '(' Expression ')' '{' Bodys '}' ELSE '{' Bodys '}'"
+    p[0] = p[3] + "JZ I" + str(parser.ifCounter) + "\n" + p[6] + "JUMP EI" + str(parser.ifCounter) + "\nI" + str(parser.ifCounter) + ": nop\n" + p[10] + "EI" + str(parser.ifCounter) + ": nop\n" 
+    parser.ifCounter += 1
 
-
+def p_Cicle(p):
+    "Cicle : WHILE '(' Expression ')' DO '{' Bodys '}'"
+    p[0] = "W" + str(parser.whileCounter) + ": nop\n" + p[3] + "JZ EW" + str(parser.whileCounter ) + "\n" + p[7] + "JUMP W" + str(parser.whileCounter) + "\nEW" + str(parser.whileCounter) + ": nop\n"
+    parser.whileCounter += 1
 
 def p_error(p):
     print('Syntax errorr: ', p)
@@ -157,12 +174,15 @@ def p_error(p):
 parser = yacc.yacc()
 #parser.success = True
 parser.proxAddr = 0
+parser.ifCounter = 0
+parser.whileCounter = 0
 parser.idTab = {}           #'name':(endereco, tipo, tamanho)
 
-with open("input.txt", 'r') as file:
+#with open("input.txt", 'r') as file:
+with open("impares.txt", 'r') as file:
     text = file.read()
 
-print(text)
+#print(text)
 parser.parse(text)
 
 #for line in sys.stdin:
@@ -181,10 +201,10 @@ parser.parse(text)
 ###Body : Expression
 ###     | Atrib
 ###     | Logics
-##     | String
-##     | Read
-#     | Condicion
-#     | Cicle
+###     | String
+###     | Read
+###     | Cond
+###     | Cicle
 ###     | "
 ###Atrib : ID '=' Expression 
 ###Expression : Term
@@ -206,9 +226,9 @@ parser.parse(text)
 ###Logic : '(' Logic '&' Expression ')'
 ###      | '(' Logic '|' Expression ')'
 ###      | Expression
-##String : PRINT '(' STRING ')'
-##       | PRINT '(' ID ')'"
-##Read  : INPUT '(' ID ')'
-#Condicion : IF '(' Expression ')' '{' body '}' ELSE '{' body '}'
-#cicle : WHILE '(' Logics ')' DO '{' body '}'
+###String : PRINT '(' STRING ')'
+###       | PRINT '(' ID ')'"
+###Read  : INPUT '(' ID ')'
+###Cond : IF '(' Expression ')' '{' Bodys '}' ELSE '{' Bodys '}'
+###Cicle : WHILE '(' Expression ')' DO '{' Bodys '}'
 #"""

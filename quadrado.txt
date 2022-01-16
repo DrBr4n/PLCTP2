@@ -1,0 +1,16 @@
+HEAD
+a 
+b 
+c 
+d
+ENDHEAD
+input(a)
+input(b)
+input(c)
+input(d)
+if (((a == b & a == c) & a == d)) 
+    {print("Quadrado Valido")} 
+else 
+    {print("Quadrado Invalido")}
+END
+

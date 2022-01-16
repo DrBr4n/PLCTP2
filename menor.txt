@@ -1,0 +1,15 @@
+HEAD
+n
+min = 999999999
+tmp
+ENDHEAD
+input(n)
+while(n > 0) do {
+    input(tmp) 
+    if (tmp < min) {min = tmp} 
+    else {}
+    n = n - 1
+}
+print("O maior numero e: ")
+print(min)
+END

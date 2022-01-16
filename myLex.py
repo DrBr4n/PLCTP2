@@ -5,7 +5,6 @@ reserved = {
     'endhead' : 'ENDHEAD',
     'end' : 'END',
     'if' : 'IF',
-    'then' : 'THEN',
     'else' : 'ELSE',
     'while' : 'WHILE',
     'do' : 'DO',
@@ -51,6 +50,22 @@ def t_STRING(t):
 
 def t_INPUT(t):
     r'input'
+    return t
+
+def t_IF(t):
+    r'if'
+    return t
+
+def t_ELSE(t):
+    r'else'
+    return t
+
+def t_WHILE(t):
+    r'while'
+    return t
+
+def t_DO(t):
+    r'do'
     return t
 
 def t_END(t):

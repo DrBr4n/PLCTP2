@@ -1,0 +1,15 @@
+HEAD
+N = 4
+r
+tmp
+ENDHEAD
+while(N > 0) do {
+    input(tmp)
+    if ((tmp % 2) != 0) {
+        r = r + 1
+        print(tmp)
+    } else {}
+    N = N - 1
+}
+print("Foram lidos ") print(r) print(" numeros impares")
+END

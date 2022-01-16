@@ -1,0 +1,15 @@
+HEAD
+N = 3
+r
+tmp
+ENDHEAD
+input(tmp)
+r = tmp
+N = N - 1
+while(N > 0) do {
+    input(tmp)
+    r = r * tmp 
+    N = N - 1
+}
+print(r)
+END
