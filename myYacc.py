@@ -1,14 +1,12 @@
 from myLex import tokens
 import ply.yacc as yacc
 import re
-import sys
-
 
 def p_Program(p):
     "Program : HEAD Decls ENDHEAD Bodys END"
     print(p[2] + "START\n" + p[4] + "STOP\n", end = "")
 
-def p_Decls(p):         #caso Decls seja vazio: erro de syntaxe no ENDHEAD, START e STOP aparecem consecutivamente
+def p_Decls(p):
     "Decls : Decls Decl"
     p[0] = p[1] + p[2]
 
@@ -63,14 +61,13 @@ def p_Empty(p):
     "Body : "
     "Decl : "
     p[0] = ""
-    
+
 def p_Atrib(p):
     "Atrib : ID '=' Expression"
     if (p[1] in parser.idTab):
         p[0] = p[3] + "STOREG " + str(parser.idTab[p[1]][0]) + "\n"
     else:
         p[0] = """PUSHS "Error variable not declared"\n""" + "WRITES" + "\n"
-
 
 def p_ExpressionOperations(p):
     """Expression : Expression '+' Term
@@ -166,69 +163,62 @@ def p_Cicle(p):
     parser.whileCounter += 1
 
 def p_error(p):
-    print('Syntax errorr: ', p)
+    print('Syntax error: ', p)
     parser.success = False
 
 
-# Build the parser
 parser = yacc.yacc()
-#parser.success = True
 parser.proxAddr = 0
 parser.ifCounter = 0
 parser.whileCounter = 0
-parser.idTab = {}           #'name':(endereco, tipo, tamanho)
+parser.idTab = {}           
 
-#with open("input.txt", 'r') as file:
-with open("impares.txt", 'r') as file:
+with open("input.txt", 'r') as file:
     text = file.read()
 
-#print(text)
+parser.success = True
 parser.parse(text)
 
-#for line in sys.stdin:
-#    parser.success = True
-#    result = parser.parse(line)
-
 #"""
-###Program : HEAD Decls ENDHEAD Bodys END
-###Decls : Decls Decl
-###      | Decl
-###Bodys : Bodys Body
-###      | Body
-###Decl : ID
-###     | ID '=' Expression
-###     | "
-###Body : Expression
-###     | Atrib
-###     | Logics
-###     | String
-###     | Read
-###     | Cond
-###     | Cicle
-###     | "
-###Atrib : ID '=' Expression 
-###Expression : Term
-###           | Expression '+' Term
-###           | Expression '-' Term
-###           | Expression EQ Term
-###           | Expression NEQ Term
-###           | Expression MORE Term
-###           | Expression MOREEQ Term
-###           | Expression LESS Term
-###           | Expression LESSEQ Term
-###Term : Factor
-###     | Term '*' Factor
-###     | Term '/' Factor
-###     | Term '%' Factor
-###Factor : NUM
-###       | ID
-###       | '(' Expression ')' 
-###Logic : '(' Logic '&' Expression ')'
-###      | '(' Logic '|' Expression ')'
-###      | Expression
-###String : PRINT '(' STRING ')'
-###       | PRINT '(' ID ')'"
-###Read  : INPUT '(' ID ')'
-###Cond : IF '(' Expression ')' '{' Bodys '}' ELSE '{' Bodys '}'
-###Cicle : WHILE '(' Expression ')' DO '{' Bodys '}'
+#Program : HEAD Decls ENDHEAD Bodys END
+#Decls : Decls Decl
+#      | Decl
+#Bodys : Bodys Body
+#      | Body
+#Decl : ID
+#     | ID '=' Expression
+#     | "
+#Body : Expression
+#     | Atrib
+#     | Logics
+#     | String
+#     | Read
+#     | Cond
+#     | Cicle
+#     | "
+#Atrib : ID '=' Expression 
+#Expression : Term
+#           | Expression '+' Term
+#           | Expression '-' Term
+#           | Expression EQ Term
+#           | Expression NEQ Term
+#           | Expression MORE Term
+#           | Expression MOREEQ Term
+#           | Expression LESS Term
+#           | Expression LESSEQ Term
+#Term : Factor
+#     | Term '*' Factor
+#     | Term '/' Factor
+#     | Term '%' Factor
+#Factor : NUM
+#       | ID
+#       | '(' Expression ')' 
+#Logic : '(' Logic '&' Expression ')'
+#      | '(' Logic '|' Expression ')'
+#      | Expression
+#String : PRINT '(' STRING ')'
+#       | PRINT '(' ID ')'"
+#Read  : INPUT '(' ID ')'
+#Cond : IF '(' Expression ')' '{' Bodys '}' ELSE '{' Bodys '}'
+#Cicle : WHILE '(' Expression ')' DO '{' Bodys '}'
 #"""
